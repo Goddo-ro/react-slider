@@ -1,13 +1,14 @@
 .slider {
   height: 300px;
   position: relative;
+  overflow: hidden;
 
   .slider__list {
     height: 100%;
     width: 100%;
-    overflow: hidden;
     display: flex;
     align-items: center;
+    transition: transform 300ms ease-in-out;
   }
 
   .slider__slide {
