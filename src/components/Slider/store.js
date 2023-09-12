@@ -19,7 +19,7 @@ export const setSlides = createEvent();
 export const moveSlideToEnd = createEvent();
 export const moveSlideToBegin = createEvent();
 
-export default createStore({
+const $store = createStore({
   width: 0,
   slides: [],
   offset: 0,
@@ -49,3 +49,5 @@ export default createStore({
     ...state,
     slides: getMovedToBeginSlides(state.slides),
   }));
+
+export default $store;
