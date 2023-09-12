@@ -1,5 +1,6 @@
 .slider {
   height: 300px;
+  position: relative;
 
   .slider__list {
     height: 100%;
@@ -17,6 +18,21 @@
 
     * {
       height: 100%;
+    }
+  }
+
+  .slider__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+
+    &.slider__arrow_left {
+      left: 10px;
+    }
+
+    &.slider__arrow_right {
+      right: 10px;
     }
   }
 }
