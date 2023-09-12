@@ -1,4 +1,4 @@
-import Slider from "./components/slider/Slider.jsx";
+import Slider from "./components/Slider/Slider.jsx";
 
 function App() {
 
