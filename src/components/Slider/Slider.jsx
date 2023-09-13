@@ -1,6 +1,6 @@
 import "./index.scss";
 import { Children, useEffect, useRef } from "react";
-import $store, { setSlides, setWidth } from "./store.js";
+import $store, { setCurSlide, setOffset, setSlides, setWidth } from "./store.js";
 import List from "./List.jsx";
 import Slide from "./Slide.jsx";
 import Arrows from "./Arrows.jsx";
@@ -22,6 +22,8 @@ export default function Slider({children}) {
     const resizeHandler = () => {
       const curSliderWidth = sliderRef.current.offsetWidth;
       curSliderWidth !== store.width && setWidth(curSliderWidth);
+      setOffset(0);
+      setCurSlide(0);
     }
 
     window.addEventListener("resize", resizeHandler);

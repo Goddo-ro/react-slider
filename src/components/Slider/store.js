@@ -18,12 +18,14 @@ export const setCurSlide = createEvent();
 export const setSlides = createEvent();
 export const moveSlideToEnd = createEvent();
 export const moveSlideToBegin = createEvent();
+export const moveToLeft = createEvent();
+export const moveToRight = createEvent();
 
 const $store = createStore({
   width: 0,
   slides: [],
   offset: 0,
-  curSlide: -1,
+  curSlide: 0,
 })
   .on(setWidth, (state, width) => ({
     ...state,
@@ -48,6 +50,16 @@ const $store = createStore({
   .on(moveSlideToBegin, (state) => ({
     ...state,
     slides: getMovedToBeginSlides(state.slides),
+  }))
+  .on(moveToLeft, (state) => ({
+    ...state,
+    offset: state.curSlide === 0 ? 0 : state.offset + state.width,
+    curSlide: state.curSlide === 0 ? 0 : state.curSlide - 1,
+  }))
+  .on(moveToRight, (state) => ({
+    ...state,
+    offset: state.curSlide === state.slides.length - 1 ? state.offset : state.offset - state.width,
+    curSlide: state.curSlide === state.slides.length - 1 ? state.curSlide : state.curSlide + 1,
   }));
 
 export default $store;
