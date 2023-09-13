@@ -1,4 +1,4 @@
-import { createEvent, createStore } from "effector/compat";
+import { createEvent, createStore, sample } from "effector/compat";
 
 const getStateWithChangedValue = (state, id, key, newValue) => {
   const slider = state[id];
@@ -18,9 +18,12 @@ export const setCurSlide = createEvent();
 export const moveToLeft = createEvent();
 export const moveToRight = createEvent();
 
+const $store = createStore({});
 
-const $store = createStore({})
-  .on(createNewSlider, (state, settings) => {
+sample({
+  clock: createNewSlider,
+  source: $store,
+  fn: (state, settings) => {
     const id = settings.id;
     const newState = {...state};
     newState[id] = {
@@ -30,32 +33,64 @@ const $store = createStore({})
       curSlide: settings.curSlide,
     }
     return newState;
-  })
-  .on(setWidth, (state, payload) =>
-    getStateWithChangedValue(state, payload.id, "width", payload.width))
-  .on(setOffset, (state, payload) =>
-    getStateWithChangedValue(state, payload.id, "offset", payload.offset))
-  .on(setCurSlide, (state, payload) =>
-    getStateWithChangedValue(state, payload.id, "curSlide", payload.curSlide))
-  .on(moveToLeft, (state, id) => {
+  },
+  target: $store,
+});
+
+sample({
+  clock: setWidth,
+  source: $store,
+  fn: (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "width", payload.width),
+  target: $store,
+});
+
+sample({
+  clock: setOffset,
+  source: $store,
+  fn: (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "offset", payload.offset),
+  target: $store,
+});
+
+sample({
+  clock: setCurSlide,
+  source: $store,
+  fn: (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "curSlide", payload.curSlide),
+  target: $store,
+});
+
+sample({
+  clock: moveToLeft,
+  source: $store,
+  filter: (state, id) => !(state[id].curSlide === 0),
+  fn: (state, id) => {
     const slider = state[id];
-    if (slider.curSlide === 0) return state;
     slider.offset = slider.offset + slider.width;
     slider.curSlide = slider.curSlide - 1;
     return {
       ...state,
       [id]: slider,
     };
-  })
-  .on(moveToRight, (state, id) => {
+  },
+  target: $store,
+});
+
+sample({
+  clock: moveToRight,
+  source: $store,
+  filter: (state, id) => !(state[id].curSlide === state[id].slides.length - 1),
+  fn: (state, id) => {
     const slider = state[id];
-    if (slider.curSlide === slider.slides.length - 1) return state;
     slider.offset = slider.offset - slider.width;
     slider.curSlide = slider.curSlide + 1;
     return {
       ...state,
       [id]: slider,
     }
-  });
+  },
+  target: $store,
+});
 
 export default $store;
