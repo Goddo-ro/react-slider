@@ -8,13 +8,16 @@ function App() {
     <>
       <Slider id={"first-slider"} showArrows>
         <Slider.Slide>
-          <img src={Image1} />
+          <Slider.Image src={Image1} />
+          <Slider.Description text={"First image"} />
         </Slider.Slide>
         <Slider.Slide>
-          <img src={Image2} />
+          <Slider.Image src={Image2} />
+          <Slider.Description text={"Second image"} />
         </Slider.Slide>
         <Slider.Slide>
-          <img src={Image3} />
+          <Slider.Image src={Image3} />
+          <Slider.Description text={"Third image"} />
         </Slider.Slide>
       </Slider>
     </>

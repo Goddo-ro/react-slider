@@ -1,10 +1,12 @@
 import "./index.scss";
 import { Children, useEffect, useRef } from "react";
 import $store, { createNewSlider, setCurSlide, setOffset, setWidth } from "./store.js";
-import List from "./List.jsx";
+import SliderList from "./SliderList.jsx";
 import Slide from "./Slide.jsx";
 import Arrows from "./Arrows.jsx";
 import { useStore } from "effector-react";
+import SliderImage from "./SliderImage.jsx";
+import SliderDescription from "./SliderDescription.jsx";
 
 // eslint-disable-next-line react/prop-types
 export default function Slider({id, showArrows, children}) {
@@ -40,7 +42,7 @@ export default function Slider({id, showArrows, children}) {
   return (
     <div className="slider" ref={sliderRef}>
       { showArrows && <Arrows id={id} /> }
-      <List id={id} style={{
+      <SliderList id={id} style={{
         transform: `translateX(${store[id]?.offset}px)`,
       }} />
     </div>
@@ -48,3 +50,5 @@ export default function Slider({id, showArrows, children}) {
 }
 
 Slider.Slide = Slide;
+Slider.Image = SliderImage;
+Slider.Description = SliderDescription;

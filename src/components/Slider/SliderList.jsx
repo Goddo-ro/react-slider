@@ -2,7 +2,7 @@ import $store from "./store.js";
 import { useStore } from "effector-react";
 
 // eslint-disable-next-line react/prop-types
-export default function List({id, ...rest}) {
+export default function SliderList({id, ...rest}) {
   const store = useStore($store);
 
   return (
