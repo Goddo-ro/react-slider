@@ -7,7 +7,7 @@ import Arrows from "./Arrows.jsx";
 import { useStore } from "effector-react";
 
 // eslint-disable-next-line react/prop-types
-export default function Slider({id, children}) {
+export default function Slider({id, showArrows, children}) {
   const store = useStore($store);
 
   const sliderRef = useRef();
@@ -39,7 +39,7 @@ export default function Slider({id, children}) {
 
   return (
     <div className="slider" ref={sliderRef}>
-      <Arrows id={id} />
+      { showArrows && <Arrows id={id} /> }
       <List id={id} style={{
         transform: `translateX(${store[id]?.offset}px)`,
       }} />

@@ -6,7 +6,7 @@ import Image3 from "./assets/images/img3.png";
 function App() {
   return (
     <>
-      <Slider id={"first-slider"}>
+      <Slider id={"first-slider"} showArrows>
         <Slider.Slide>
           <img src={Image1} />
         </Slider.Slide>
