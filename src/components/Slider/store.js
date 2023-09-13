@@ -1,65 +1,61 @@
 import { createEvent, createStore } from "effector/compat";
 
-const getMovedToEndSlides = (slides) => {
-  const movedSlide = slides.shift();
-  slides.push(movedSlide);
-  return slides;
+const getStateWithChangedValue = (state, id, key, newValue) => {
+  const slider = state[id];
+  return {
+    ...state,
+    [id]: {
+      ...slider,
+      [key]: newValue,
+    }
+  }
 }
 
-const getMovedToBeginSlides = (slides) => {
-  const movedSlide = slides.pop();
-  slides.unshift(movedSlide);
-  return slides;
-}
-
+export const createNewSlider = createEvent();
 export const setWidth = createEvent();
 export const setOffset = createEvent();
 export const setCurSlide = createEvent();
-export const setSlides = createEvent();
-export const moveSlideToEnd = createEvent();
-export const moveSlideToBegin = createEvent();
 export const moveToLeft = createEvent();
 export const moveToRight = createEvent();
 
-const $store = createStore({
-  width: 0,
-  slides: [],
-  offset: 0,
-  curSlide: 0,
-})
-  .on(setWidth, (state, width) => ({
-    ...state,
-    width: width,
-  }))
-  .on(setOffset, (state, offset) => ({
-    ...state,
-    offset: offset,
-  }))
-  .on(setCurSlide, (state, curSlide) => ({
-    ...state,
-    curSlide: curSlide,
-  }))
-  .on(setSlides, (state, slides) => ({
-    ...state,
-    slides: [...slides],
-  }))
-  .on(moveSlideToEnd, (state) => ({
-    ...state,
-    slides: getMovedToEndSlides(state.slides),
-  }))
-  .on(moveSlideToBegin, (state) => ({
-    ...state,
-    slides: getMovedToBeginSlides(state.slides),
-  }))
-  .on(moveToLeft, (state) => ({
-    ...state,
-    offset: state.curSlide === 0 ? 0 : state.offset + state.width,
-    curSlide: state.curSlide === 0 ? 0 : state.curSlide - 1,
-  }))
-  .on(moveToRight, (state) => ({
-    ...state,
-    offset: state.curSlide === state.slides.length - 1 ? state.offset : state.offset - state.width,
-    curSlide: state.curSlide === state.slides.length - 1 ? state.curSlide : state.curSlide + 1,
-  }));
+
+const $store = createStore({})
+  .on(createNewSlider, (state, settings) => {
+    const id = settings.id;
+    const newState = {...state};
+    newState[id] = {
+      width: settings.width,
+      offset: settings.offset,
+      slides: settings.slides,
+      curSlide: settings.curSlide,
+    }
+    return newState;
+  })
+  .on(setWidth, (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "width", payload.width))
+  .on(setOffset, (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "offset", payload.offset))
+  .on(setCurSlide, (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "curSlide", payload.curSlide))
+  .on(moveToLeft, (state, id) => {
+    const slider = state[id];
+    if (slider.curSlide === 0) return state;
+    slider.offset = slider.offset + slider.width;
+    slider.curSlide = slider.curSlide - 1;
+    return {
+      ...state,
+      [id]: slider,
+    };
+  })
+  .on(moveToRight, (state, id) => {
+    const slider = state[id];
+    if (slider.curSlide === slider.slides.length - 1) return state;
+    slider.offset = slider.offset - slider.width;
+    slider.curSlide = slider.curSlide + 1;
+    return {
+      ...state,
+      [id]: slider,
+    }
+  });
 
 export default $store;

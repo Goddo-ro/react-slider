@@ -1,29 +1,33 @@
 import "./index.scss";
 import { Children, useEffect, useRef } from "react";
-import $store, { setCurSlide, setOffset, setSlides, setWidth } from "./store.js";
+import $store, { createNewSlider, setCurSlide, setOffset, setWidth } from "./store.js";
 import List from "./List.jsx";
 import Slide from "./Slide.jsx";
 import Arrows from "./Arrows.jsx";
 import { useStore } from "effector-react";
 
 // eslint-disable-next-line react/prop-types
-export default function Slider({children}) {
+export default function Slider({id, children}) {
   const store = useStore($store);
 
   const sliderRef = useRef();
 
   useEffect(() => {
-    setSlides(Children.toArray(children));
-  }, [children]);
+    createNewSlider({
+      id: id,
+      width: sliderRef.current.offsetWidth,
+      offset: 0,
+      curSlide: 0,
+      slides: Children.toArray(children),
+    });
+  }, [id]);
 
   useEffect(() => {
-    setWidth(sliderRef.current.offsetWidth);
-
     const resizeHandler = () => {
       const curSliderWidth = sliderRef.current.offsetWidth;
-      curSliderWidth !== store.width && setWidth(curSliderWidth);
-      setOffset(0);
-      setCurSlide(0);
+      curSliderWidth !== store.width && setWidth({ id, width: curSliderWidth });
+      setOffset({ id, offset: 0 });
+      setCurSlide({ id, curSlide: 0 });
     }
 
     window.addEventListener("resize", resizeHandler);
@@ -35,9 +39,9 @@ export default function Slider({children}) {
 
   return (
     <div className="slider" ref={sliderRef}>
-      <Arrows/>
-      <List style={{
-        transform: `translateX(${store.offset}px)`,
+      <Arrows id={id} />
+      <List id={id} style={{
+        transform: `translateX(${store[id]?.offset}px)`,
       }} />
     </div>
   )
