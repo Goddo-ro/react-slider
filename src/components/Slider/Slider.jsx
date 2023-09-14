@@ -83,12 +83,13 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     const offset = store[id]?.offset;
     const width = store[id]?.width;
     const slidesCount = store[id]?.slides?.length;
+    const curSlide = store[id]?.curSlide;
 
     if (!width || !slidesCount) return;
 
     if (offset === 0) {
+      setTransitionDuration(0);
       setTimeout(() => {
-        setTransitionDuration(0);
         setOffset({id, offset: -(width * (slidesCount - 1 - clonesCount.tail))});
         setCurSlide({id, curSlide: Children.count(children) - 1 });
       }, TRANSITION_DURATION);
@@ -96,8 +97,8 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     }
 
     if (offset === -(width * (slidesCount - 1))) {
+      setTransitionDuration(0);
       setTimeout(() => {
-        setTransitionDuration(0);
         setOffset({id, offset: -(clonesCount.head * width)});
         setCurSlide({id, curSlide: 0});
       }, TRANSITION_DURATION);
@@ -121,19 +122,19 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
   const handleTouchEnd = () => {
     if (touchPosition === null) return;
 
-    if (moving < 20 || moving > 20) {
+    if (moving < 50 || moving > 50) {
       setTransitionDuration(TRANSITION_DURATION);
       setTimeout(() => {
         setTransitionDuration(0);
       }, TRANSITION_DURATION);
     }
 
-    if (moving < 20) {
+    if (moving < -50) {
       moveToRight(id);
 
     }
 
-    if (moving > 20) {
+    if (moving > 50) {
       moveToLeft(id);
     }
 
