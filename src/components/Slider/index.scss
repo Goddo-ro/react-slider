@@ -40,12 +40,18 @@ $gray-color: #525252;
     right: 12px;
     bottom: 0;
     height: fit-content;
+    max-height: 100%;
     background: rgba(0, 0, 0, .3);
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     color: $white-color;
     font-weight: normal;
     padding: 4px 8px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .slider__arrow {

@@ -21,9 +21,9 @@ const TRANSITION_DURATION = 300;
 const AUTO_INTERVAL = 5000;
 
 // eslint-disable-next-line react/prop-types
-export default function Slider({id, showArrows, showDots, infinite, auto, delay = AUTO_INTERVAL, children}) {
+export default function Slider({ id, showArrows, showDots, infinite, auto, delay = AUTO_INTERVAL, children }) {
   const [transitionDuration, setTransitionDuration] = useState(0);
-  const [clonesCount, setClonesCount] = useState({head: 0, tail: 0});
+  const [clonesCount, setClonesCount] = useState({ head: 0, tail: 0 });
   const [touchPosition, setTouchPosition] = useState(null);
   const [moving, setMoving] = useState(0);
 
@@ -46,8 +46,9 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     const resizeHandler = () => {
       const curSliderWidth = sliderRef.current.offsetWidth;
       curSliderWidth !== store[id]?.width && setWidth({ id, width: curSliderWidth });
-      setOffset({ id, offset: -sliderRef.current.offsetWidth });
+      setOffset({ id, offset: -(sliderRef.current.offsetWidth * infinite ? 1 : 0) });
       setCurSlide({ id, curSlide: 0 });
+      setWidth({ id, curSliderWidth });
     }
 
     window.addEventListener("resize", resizeHandler);
@@ -55,16 +56,18 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     return () => {
       window.removeEventListener("resize", resizeHandler);
     }
-  }, [sliderRef?.current?.offsetWidth]);
+  }, []);
 
   useEffect(() => {
     if (infinite) {
-      setSlides({id, slides: [
-        cloneElement(children[Children.count(children) - 1], {key: -1}),
-        ...children,
-        cloneElement(children[0], {key: 12}),
-      ]});
-      setClonesCount({head: 1, tail: 1});
+      setSlides({
+        id, slides: [
+          cloneElement(children[Children.count(children) - 1], { key: -1 }),
+          ...children,
+          cloneElement(children[0], { key: 12 }),
+        ]
+      });
+      setClonesCount({ head: 1, tail: 1 });
     }
   }, [children, infinite])
 
@@ -93,8 +96,8 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     if (offset === 0) {
       setTransitionDuration(0);
       setTimeout(() => {
-        setOffset({id, offset: -(width * (slidesCount - 1 - clonesCount.tail))});
-        setCurSlide({id, curSlide: Children.count(children) - 1 });
+        setOffset({ id, offset: -(width * (slidesCount - 1 - clonesCount.tail)) });
+        setCurSlide({ id, curSlide: Children.count(children) - 1 });
       }, TRANSITION_DURATION);
       return;
     }
@@ -102,8 +105,8 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     if (offset === -(width * (slidesCount - 1))) {
       setTransitionDuration(0);
       setTimeout(() => {
-        setOffset({id, offset: -(clonesCount.head * width)});
-        setCurSlide({id, curSlide: 0});
+        setOffset({ id, offset: -(clonesCount.head * width) });
+        setCurSlide({ id, curSlide: 0 });
       }, TRANSITION_DURATION);
     }
   }, [store[id]?.offset, infinite, clonesCount])
@@ -150,15 +153,15 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
          onTouchStart={handleTouchStart}
          onTouchMove={handleTouchMove}
          onTouchEnd={handleTouchEnd}>
-      { showArrows && <Arrows id={id} /> }
+      {showArrows && <Arrows id={id}/>}
       <SliderList showArrows id={id} style={{
         transform: `translateX(${store[id]?.offset + moving}px)`,
         transitionDuration: `${transitionDuration}ms`,
-      }} />
+      }}/>
       <div className="slider__dots">
-        { showDots &&
+        {showDots &&
           new Array(Children.count(children)).fill(0).map((_, i) =>
-            <Dot key={i} id={id} index={i} />)
+            <Dot key={i} id={id} index={i}/>)
         }
       </div>
     </div>

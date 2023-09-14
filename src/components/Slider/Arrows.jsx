@@ -3,7 +3,7 @@ import $store, { moveToLeft, moveToRight } from "./store.js";
 import { useStore } from "effector-react";
 
 // eslint-disable-next-line react/prop-types
-export default function Arrows({id}) {
+export default function Arrows({ id }) {
   const store = useStore($store);
 
   return (
