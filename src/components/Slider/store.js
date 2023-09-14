@@ -15,6 +15,7 @@ export const createNewSlider = createEvent();
 export const setWidth = createEvent();
 export const setOffset = createEvent();
 export const setCurSlide = createEvent();
+export const setSlides = createEvent();
 export const moveToLeft = createEvent();
 export const moveToRight = createEvent();
 export const moveTo = createEvent();
@@ -32,6 +33,7 @@ sample({
       offset: settings.offset,
       slides: settings.slides,
       curSlide: settings.curSlide,
+      infinite: settings.infinite,
     }
     return newState;
   },
@@ -63,9 +65,17 @@ sample({
 });
 
 sample({
+  clock: setSlides,
+  source: $store,
+  fn: (state, payload) =>
+    getStateWithChangedValue(state, payload.id, "slides", payload.slides),
+  target: $store,
+})
+
+sample({
   clock: moveToLeft,
   source: $store,
-  filter: (state, id) => !(state[id].curSlide === 0),
+  filter: (state, id) => !(!state[id].infinite && state[id].curSlide === 0),
   fn: (state, id) => {
     const slider = state[id];
     slider.offset += slider.width;
@@ -81,7 +91,7 @@ sample({
 sample({
   clock: moveToRight,
   source: $store,
-  filter: (state, id) => !(state[id].curSlide === state[id].slides.length - 1),
+  filter: (state, id) => !(!state[id].infinite && state[id].curSlide === state[id].slides.length - 1),
   fn: (state, id) => {
     const slider = state[id];
     slider.offset -= slider.width;
@@ -117,6 +127,6 @@ sample({
     }
   },
   target: $store,
-})
+});
 
 export default $store;
