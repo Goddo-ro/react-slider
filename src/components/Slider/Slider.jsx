@@ -18,7 +18,7 @@ import SliderDescription from "./SliderDescription.jsx";
 import Dot from "./Dot.jsx";
 
 const TRANSITION_DURATION = 300;
-const AUTO_INTERVAL = 3000;
+const AUTO_INTERVAL = 5000;
 
 // eslint-disable-next-line react/prop-types
 export default function Slider({id, showArrows, showDots, infinite, auto, delay = AUTO_INTERVAL, children}) {
@@ -52,15 +52,8 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
 
     window.addEventListener("resize", resizeHandler);
 
-    let autoScroll;
-    if (auto)
-      autoScroll = setInterval(() => {
-        moveToRight(id);
-      }, delay);
-
     return () => {
       window.removeEventListener("resize", resizeHandler);
-      clearInterval(autoScroll);
     }
   }, [sliderRef?.current?.offsetWidth]);
 
@@ -72,10 +65,21 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
         cloneElement(children[0], {key: 12}),
       ]});
       setClonesCount({head: 1, tail: 1});
-      setOffset({id, offset: -sliderRef.current.offsetWidth});
-      return;
     }
   }, [children, infinite])
+
+  useEffect(() => {
+    let intervalId;
+    if (auto) {
+      intervalId = setInterval(() => {
+        moveToRight(id);
+      }, delay);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    }
+  }, [auto]);
 
   useEffect(() => {
     if (!infinite) return;
@@ -83,7 +87,6 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     const offset = store[id]?.offset;
     const width = store[id]?.width;
     const slidesCount = store[id]?.slides?.length;
-    const curSlide = store[id]?.curSlide;
 
     if (!width || !slidesCount) return;
 
@@ -129,12 +132,12 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
       }, TRANSITION_DURATION);
     }
 
-    if (moving < -50) {
+    if (moving < -(sliderRef.current.offsetWidth / 10)) {
       moveToRight(id);
 
     }
 
-    if (moving > 50) {
+    if (moving > sliderRef.current.offsetWidth / 10) {
       moveToLeft(id);
     }
 
@@ -148,7 +151,7 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
          onTouchMove={handleTouchMove}
          onTouchEnd={handleTouchEnd}>
       { showArrows && <Arrows id={id} /> }
-      <SliderList id={id} style={{
+      <SliderList showArrows id={id} style={{
         transform: `translateX(${store[id]?.offset + moving}px)`,
         transitionDuration: `${transitionDuration}ms`,
       }} />
