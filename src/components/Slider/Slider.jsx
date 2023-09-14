@@ -36,7 +36,7 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     const resizeHandler = () => {
       const curSliderWidth = sliderRef.current.offsetWidth;
       curSliderWidth !== store[id]?.width && setWidth({ id, width: curSliderWidth });
-      setOffset({ id, offset: -(clonesCount.head) * curSliderWidth });
+      setOffset({ id, offset: -sliderRef.current.offsetWidth });
       setCurSlide({ id, curSlide: 0 });
     }
 
@@ -52,7 +52,7 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
       window.removeEventListener("resize", resizeHandler);
       clearInterval(autoScroll);
     }
-  }, []);
+  }, [sliderRef?.current?.offsetWidth]);
 
   useEffect(() => {
     if (infinite) {
