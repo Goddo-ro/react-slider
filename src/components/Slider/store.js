@@ -75,7 +75,7 @@ sample({
 sample({
   clock: moveToLeft,
   source: $store,
-  filter: (state, id) => !(!state[id].infinite && state[id].curSlide === 0),
+  filter: (state, id) => !(!state[id]?.infinite && state[id]?.curSlide === 0),
   fn: (state, id) => {
     const slider = state[id];
     slider.offset += slider.width;
@@ -91,7 +91,7 @@ sample({
 sample({
   clock: moveToRight,
   source: $store,
-  filter: (state, id) => !(!state[id].infinite && state[id].curSlide === state[id].slides.length - 1),
+  filter: (state, id) => !(!state[id]?.infinite && state[id]?.curSlide === state[id]?.slides.length - 1),
   fn: (state, id) => {
     const slider = state[id];
     slider.offset -= slider.width;

@@ -1,6 +1,14 @@
 import "./index.scss";
 import { Children, cloneElement, useEffect, useRef, useState } from "react";
-import $store, { createNewSlider, moveToRight, setCurSlide, setOffset, setSlides, setWidth } from "./store.js";
+import $store, {
+  createNewSlider,
+  moveToLeft,
+  moveToRight,
+  setCurSlide,
+  setOffset,
+  setSlides,
+  setWidth
+} from "./store.js";
 import SliderList from "./SliderList.jsx";
 import Slide from "./Slide.jsx";
 import Arrows from "./Arrows.jsx";
@@ -16,6 +24,8 @@ const AUTO_INTERVAL = 3000;
 export default function Slider({id, showArrows, showDots, infinite, auto, delay = AUTO_INTERVAL, children}) {
   const [transitionDuration, setTransitionDuration] = useState(0);
   const [clonesCount, setClonesCount] = useState({head: 0, tail: 0});
+  const [touchPosition, setTouchPosition] = useState(null);
+  const [moving, setMoving] = useState(0);
 
   const store = useStore($store);
 
@@ -94,11 +104,51 @@ export default function Slider({id, showArrows, showDots, infinite, auto, delay 
     }
   }, [store[id]?.offset, infinite, clonesCount])
 
+  const handleTouchStart = (e) => {
+    setTouchPosition(e.touches[0].clientX);
+  }
+
+  const handleTouchMove = (e) => {
+    if (touchPosition === null) return;
+
+    const currentPosition = e.touches[0].clientX;
+    const direction = -(touchPosition - currentPosition);
+    if (Math.abs(direction) > sliderRef.current.offsetWidth / 5) return;
+
+    setMoving(direction);
+  }
+
+  const handleTouchEnd = () => {
+    if (touchPosition === null) return;
+
+    if (moving < 20 || moving > 20) {
+      setTransitionDuration(TRANSITION_DURATION);
+      setTimeout(() => {
+        setTransitionDuration(0);
+      }, TRANSITION_DURATION);
+    }
+
+    if (moving < 20) {
+      moveToRight(id);
+
+    }
+
+    if (moving > 20) {
+      moveToLeft(id);
+    }
+
+    setTouchPosition(null);
+    setMoving(0);
+  }
+
   return (
-    <div className="slider" ref={sliderRef}>
+    <div className="slider" ref={sliderRef}
+         onTouchStart={handleTouchStart}
+         onTouchMove={handleTouchMove}
+         onTouchEnd={handleTouchEnd}>
       { showArrows && <Arrows id={id} /> }
       <SliderList id={id} style={{
-        transform: `translateX(${store[id]?.offset}px)`,
+        transform: `translateX(${store[id]?.offset + moving}px)`,
         transitionDuration: `${transitionDuration}ms`,
       }} />
       <div className="slider__dots">
