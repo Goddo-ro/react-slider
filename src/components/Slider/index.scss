@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 $white-color: #FFF;
+$gray-color: #525252;
 
 .slider {
   height: 100%;
   width: 100%;
   position: relative;
   overflow: hidden;
-  background: rgba(0, 0, 0, .1);
   border-radius: 8px;
 
   * {
@@ -29,11 +29,6 @@ $white-color: #FFF;
     display: flex;
     flex-direction: column;
     position: relative;
-
-    * {
-      height: 100%;
-      width: 100%;
-    }
   }
 
   .slider__image {
@@ -70,5 +65,14 @@ $white-color: #FFF;
     &.slider__arrow_right {
       right: 10px;
     }
+  }
+
+  .slider__dots {
+    margin-inline: auto;
+    width: fit-content;
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    color: $gray-color;
   }
 }

@@ -17,6 +17,7 @@ export const setOffset = createEvent();
 export const setCurSlide = createEvent();
 export const moveToLeft = createEvent();
 export const moveToRight = createEvent();
+export const moveTo = createEvent();
 
 const $store = createStore({});
 
@@ -25,7 +26,7 @@ sample({
   source: $store,
   fn: (state, settings) => {
     const id = settings.id;
-    const newState = {...state};
+    const newState = { ...state };
     newState[id] = {
       width: settings.width,
       offset: settings.offset,
@@ -67,7 +68,7 @@ sample({
   filter: (state, id) => !(state[id].curSlide === 0),
   fn: (state, id) => {
     const slider = state[id];
-    slider.offset = slider.offset + slider.width;
+    slider.offset += slider.width;
     slider.curSlide = slider.curSlide - 1;
     return {
       ...state,
@@ -83,7 +84,7 @@ sample({
   filter: (state, id) => !(state[id].curSlide === state[id].slides.length - 1),
   fn: (state, id) => {
     const slider = state[id];
-    slider.offset = slider.offset - slider.width;
+    slider.offset -= slider.width;
     slider.curSlide = slider.curSlide + 1;
     return {
       ...state,
@@ -92,5 +93,30 @@ sample({
   },
   target: $store,
 });
+
+sample({
+  clock: moveTo,
+  source: $store,
+  // Check if index is between 0 and slides length and not equal to cur slide
+  filter: (state, payload) => (payload.index >= 0 &&
+    payload.index < state[payload.id].slides.length &&
+    state[payload.id].curSlide !== payload.index),
+  fn: (state, payload) => {
+    const slider = state[payload.id];
+
+    if (payload.index < slider.curSlide) {
+      slider.offset += (slider.curSlide - payload.index) * slider.width;
+    } else {
+      slider.offset -= (payload.index - slider.curSlide) * slider.width;
+    }
+
+    slider.curSlide = payload.index;
+    return {
+      ...state,
+      [payload.id]: slider,
+    }
+  },
+  target: $store,
+})
 
 export default $store;

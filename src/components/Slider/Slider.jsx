@@ -7,9 +7,10 @@ import Arrows from "./Arrows.jsx";
 import { useStore } from "effector-react";
 import SliderImage from "./SliderImage.jsx";
 import SliderDescription from "./SliderDescription.jsx";
+import Dot from "./Dot.jsx";
 
 // eslint-disable-next-line react/prop-types
-export default function Slider({id, showArrows, children}) {
+export default function Slider({id, showArrows, showDots, children}) {
   const store = useStore($store);
 
   const sliderRef = useRef();
@@ -45,6 +46,11 @@ export default function Slider({id, showArrows, children}) {
       <SliderList id={id} style={{
         transform: `translateX(${store[id]?.offset}px)`,
       }} />
+      <div className="slider__dots">
+        { showDots &&
+          new Array(Children.count(children)).fill(0).map((_, i) => <Dot key={i} id={id} index={i} />)
+        }
+      </div>
     </div>
   )
 }
