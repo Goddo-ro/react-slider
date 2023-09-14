@@ -68,7 +68,7 @@ $gray-color: #525252;
     cursor: pointer;
 
     &.slider__arrow_left {
-      left: 0;
+      left: 12px;
 
       &:hover {
         background: rgb(2,0,36);
@@ -77,7 +77,7 @@ $gray-color: #525252;
     }
 
     &.slider__arrow_right {
-      right: 0;
+      right: 12px;
 
       &:hover {
         background: rgb(2,0,36);
