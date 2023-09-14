@@ -1,6 +1,6 @@
 import "./index.scss";
 import { Children, cloneElement, useEffect, useRef, useState } from "react";
-import $store, { createNewSlider, setCurSlide, setOffset, setSlides, setWidth } from "./store.js";
+import $store, { createNewSlider, moveToRight, setCurSlide, setOffset, setSlides, setWidth } from "./store.js";
 import SliderList from "./SliderList.jsx";
 import Slide from "./Slide.jsx";
 import Arrows from "./Arrows.jsx";
@@ -10,9 +10,10 @@ import SliderDescription from "./SliderDescription.jsx";
 import Dot from "./Dot.jsx";
 
 const TRANSITION_DURATION = 300;
+const AUTO_INTERVAL = 3000;
 
 // eslint-disable-next-line react/prop-types
-export default function Slider({id, showArrows, showDots, infinite, children}) {
+export default function Slider({id, showArrows, showDots, infinite, auto, delay = AUTO_INTERVAL, children}) {
   const [transitionDuration, setTransitionDuration] = useState(0);
   const [clonesCount, setClonesCount] = useState({head: 0, tail: 0});
 
@@ -41,8 +42,15 @@ export default function Slider({id, showArrows, showDots, infinite, children}) {
 
     window.addEventListener("resize", resizeHandler);
 
+    let autoScroll;
+    if (auto)
+      autoScroll = setInterval(() => {
+        moveToRight(id);
+      }, delay);
+
     return () => {
       window.removeEventListener("resize", resizeHandler);
+      clearInterval(autoScroll);
     }
   }, []);
 
