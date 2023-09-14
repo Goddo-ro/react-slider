@@ -49,9 +49,9 @@ export default function Slider({id, showArrows, showDots, infinite, children}) {
   useEffect(() => {
     if (infinite) {
       setSlides({id, slides: [
-        cloneElement(children[Children.count(children) - 1]),
+        cloneElement(children[Children.count(children) - 1], {key: -1}),
         ...children,
-        cloneElement(children[0]),
+        cloneElement(children[0], {key: 12}),
       ]});
       setClonesCount({head: 1, tail: 1});
       setOffset({id, offset: -sliderRef.current.offsetWidth});
