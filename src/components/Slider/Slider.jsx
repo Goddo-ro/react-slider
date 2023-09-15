@@ -46,9 +46,10 @@ export default function Slider({ id, showArrows, showDots, infinite, auto, delay
     const resizeHandler = () => {
       const curSliderWidth = sliderRef.current.offsetWidth;
       curSliderWidth !== store[id]?.width && setWidth({ id, width: curSliderWidth });
-      setOffset({ id, offset: -(sliderRef.current.offsetWidth * infinite ? 1 : 0) });
+      console.log(-(curSliderWidth * (infinite ? 1 : 0)))
+      setOffset({ id, offset: -(curSliderWidth * (infinite ? 1 : 0)) });
       setCurSlide({ id, curSlide: 0 });
-      setWidth({ id, curSliderWidth });
+      setWidth({ id, width: curSliderWidth });
     }
 
     window.addEventListener("resize", resizeHandler);

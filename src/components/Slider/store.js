@@ -129,4 +129,6 @@ sample({
   target: $store,
 });
 
+$store.watch(state => console.log(state));
+
 export default $store;
